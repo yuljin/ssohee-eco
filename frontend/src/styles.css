@@ -1,0 +1,319 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #101116;
+  color: #eef0f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    linear-gradient(180deg, rgba(70, 94, 135, 0.16), rgba(16, 17, 22, 0) 420px),
+    #101116;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+}
+
+.sidebar {
+  border-right: 1px solid #242633;
+  background: #151720;
+  padding: 20px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 22px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #8aadf4, #a6da95);
+}
+
+.nav {
+  display: grid;
+  gap: 6px;
+}
+
+.nav button {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #a6adbb;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nav button.active,
+.nav button:hover {
+  color: #f5f7ff;
+  background: #202331;
+}
+
+.content {
+  padding: 24px;
+  min-width: 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.page-header p {
+  color: #9ba3b4;
+  margin: 6px 0 0;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+}
+
+.grid.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.card {
+  background: #181b25;
+  border: 1px solid #282c3a;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.card h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+}
+
+.stat-label {
+  color: #8f98aa;
+  font-size: 13px;
+}
+
+.stat-value {
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.subtle {
+  color: #8f98aa;
+  font-size: 13px;
+}
+
+.gain {
+  color: #ff6b7a;
+}
+
+.loss {
+  color: #75a7ff;
+}
+
+.neutral {
+  color: #cfd5e6;
+}
+
+.success {
+  color: #a6da95;
+}
+
+.warning {
+  color: #eed49f;
+}
+
+.danger {
+  color: #ed8796;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input {
+  height: 36px;
+  border: 1px solid #333849;
+  background: #10131b;
+  color: #edf0f8;
+  border-radius: 8px;
+  padding: 0 10px;
+  min-width: 120px;
+}
+
+.button {
+  height: 36px;
+  border: 1px solid #333849;
+  background: #202331;
+  color: #edf0f8;
+  border-radius: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.button.primary {
+  background: #8aadf4;
+  color: #101116;
+  border-color: #8aadf4;
+  font-weight: 700;
+}
+
+.button.danger {
+  background: #332027;
+  color: #ed8796;
+  border-color: #58313c;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #282c3a;
+  padding: 10px 8px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: #8f98aa;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  border-radius: 999px;
+  padding: 0 9px;
+  background: #222635;
+  color: #cfd5e6;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tag.buy,
+.tag.green {
+  background: rgba(166, 218, 149, 0.14);
+  color: #a6da95;
+}
+
+.tag.sell,
+.tag.red {
+  background: rgba(237, 135, 150, 0.14);
+  color: #ed8796;
+}
+
+.tag.orange {
+  background: rgba(238, 212, 159, 0.14);
+  color: #eed49f;
+}
+
+.split {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.empty,
+.loading,
+.error {
+  padding: 56px 20px;
+  text-align: center;
+  color: #8f98aa;
+}
+
+.progress {
+  height: 8px;
+  background: #262a38;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  background: #8aadf4;
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+
+  .nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid.cols-2,
+  .grid.cols-3,
+  .grid.cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
