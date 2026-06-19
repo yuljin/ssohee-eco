@@ -11,6 +11,7 @@ export function OrdersTable({ orders }: { orders: TradeOrder[] }) {
             <th>구분</th>
             <th>종목</th>
             <th>수량</th>
+            <th>기준가</th>
             <th>금액</th>
             <th>원화 환산</th>
           </tr>
@@ -21,6 +22,7 @@ export function OrdersTable({ orders }: { orders: TradeOrder[] }) {
               <td data-label="구분"><span className={`tag ${order.side.toLowerCase()}`}>{order.side}</span></td>
               <td data-label="종목"><strong>{order.symbol}</strong></td>
               <td data-label="수량">{order.quantity.toLocaleString("en-US", { maximumFractionDigits: 6 })}</td>
+              <td data-label="기준가">{order.quantity ? fmt.usd(order.value / order.quantity) : "-"}</td>
               <td data-label="금액">{fmt.usd(order.value)}</td>
               <td data-label="원화 환산">{order.value_krw ? fmt.krw(order.value_krw) : "-"}</td>
             </tr>

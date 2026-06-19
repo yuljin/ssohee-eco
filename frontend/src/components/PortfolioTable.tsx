@@ -28,6 +28,7 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
             <th>종목</th>
             <th>수량</th>
             <th>평가금액</th>
+            <th>현재가</th>
             <th>평단가</th>
             <th>손익</th>
             <th>현재 비중</th>
@@ -42,6 +43,7 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
             const pnlAmount = snapshot.pnl_amount_by_symbol[baseSymbol] ?? 0;
             const weight = snapshot.weight_by_symbol[baseSymbol] ?? value / snapshot.total_value;
             const avgCost = snapshot.avg_cost_by_symbol[baseSymbol] ?? 0;
+            const currentPrice = quantity > 0 && baseSymbol !== "CASH" ? value / quantity : 0;
             return (
               <tr key={symbol}>
                 <td data-label="종목"><strong>{symbol}</strong></td>
@@ -50,6 +52,7 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
                   {fmt.usd(value)}
                   <div className="subtle">{snapshot.exchange_rate ? fmt.krw(value * snapshot.exchange_rate) : ""}</div>
                 </td>
+                <td data-label="현재가">{currentPrice ? fmt.usd(currentPrice) : "-"}</td>
                 <td data-label="평단가">{avgCost ? fmt.usd(avgCost) : "-"}</td>
                 <td data-label="손익" className={pnlClass(pnlPct)}>
                   {fmt.pct(pnlPct)}
