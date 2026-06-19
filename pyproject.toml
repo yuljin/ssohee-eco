@@ -1,0 +1,9 @@
+[project]
+name = "ssohee-eco"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+app = "backend.app.main:app"
+

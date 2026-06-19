@@ -27,3 +27,6 @@ npm run dev
 
 초기 DB는 `data/portfolio.db`를 사용합니다. 기존 거래 33건은 `ssohee-eco/portfolio.db`에서 복사해 검증합니다.
 
+## 배포
+
+Vercel + Neon Postgres 배포 절차는 [DEPLOYMENT.md](./DEPLOYMENT.md)를 참고하세요.

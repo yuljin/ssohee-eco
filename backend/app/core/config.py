@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,6 +18,8 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{ROOT_DIR / 'data' / 'portfolio.db'}"
     initial_cash: float = 0.0
     live_market_data: bool = True
+    app_basic_auth_user: Optional[str] = None
+    app_basic_auth_password: Optional[str] = None
 
 
 @lru_cache
@@ -23,6 +28,15 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+
+
+def sqlalchemy_database_url() -> str:
+    url = settings.database_url
+    if url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url.removeprefix("postgres://")
+    elif url.startswith("postgresql://") and "+psycopg" not in url:
+        url = "postgresql+psycopg://" + url.removeprefix("postgresql://")
+    return url
 
 KRW_SETTLED_SYMBOLS = {"GOLD-KRX", "BTC"}
 MANUAL_PRICE_REQUIRED = {"GOLD-KRX"}
