@@ -3,11 +3,40 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Dict, Iterable, List, Tuple
 
+import requests
 import yfinance as yf
 
 from app.core.config import settings
 from app.schemas.market import DrawdownAnalysis, DrawdownInfo
 from app.services.price_service import TICKER_MAPPING, get_usd_krw_exchange_rate
+
+
+def _fetch_usd_krw_history(period_days: int) -> list[dict]:
+    end = datetime.now().date()
+    start = end - timedelta(days=period_days)
+    response = requests.get(
+        "https://api.frankfurter.dev/v2/rates",
+        params={
+            "from": start.isoformat(),
+            "to": end.isoformat(),
+            "base": "USD",
+            "quotes": "KRW",
+        },
+        timeout=8,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    rows = payload if isinstance(payload, list) else payload.get("rates", [])
+    history: list[dict] = []
+    for row in rows:
+        try:
+            rate = float(row.get("rate") or row.get("rates", {}).get("KRW"))
+            date = row["date"]
+        except (TypeError, ValueError, KeyError):
+            continue
+        if rate > 0:
+            history.append({"date": date, "rate": rate})
+    return history
 
 
 def analyze_exchange_rate(period_days: int = 365) -> dict:
@@ -27,18 +56,14 @@ def analyze_exchange_rate(period_days: int = 365) -> dict:
             "recommendation": "실시간 시세 조회가 꺼져 있어 기본 환율로 표시합니다.",
             "history": [{"date": datetime.now().strftime("%Y-%m-%d"), "rate": current}],
         }
-    end = datetime.now()
-    start = end - timedelta(days=period_days)
     history: list[dict] = []
     try:
-        df = yf.Ticker("KRW=X").history(start=start, end=end)
-        history = [
-            {"date": idx.strftime("%Y-%m-%d"), "rate": float(row["Close"])}
-            for idx, row in df.dropna().iterrows()
-            if row.get("Close", 0) > 0
-        ]
+        history = _fetch_usd_krw_history(period_days)
     except Exception:
         history = []
+    today = datetime.now().strftime("%Y-%m-%d")
+    if history and history[-1]["date"] != today:
+        history.append({"date": today, "rate": current})
     rates = [row["rate"] for row in history] or [current]
     high = max(rates)
     low = min(rates)
