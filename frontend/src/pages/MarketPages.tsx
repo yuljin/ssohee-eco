@@ -27,17 +27,17 @@ export function DrawdownPage() {
       </div>
       <div className="card" style={{ marginTop: 14 }}>
         <h2>상세</h2>
-        <div className="table-wrap">
+        <div className="table-wrap responsive-table">
           <table>
             <thead><tr><th>종목</th><th>현재가</th><th>고점</th><th>하락폭</th><th>고점 이후</th><th>시그널</th></tr></thead>
             <tbody>{data.symbols.map((row) => (
               <tr key={row.symbol}>
-                <td><strong>{row.symbol}</strong></td>
-                <td>{fmt.usd(row.current_price)}</td>
-                <td>{fmt.usd(row.high_52w)}<div className="subtle">{row.high_52w_date}</div></td>
-                <td className={row.drawdown_pct <= -20 ? "danger" : row.drawdown_pct <= -10 ? "warning" : "success"}>{fmt.pct(row.drawdown_pct)}</td>
-                <td>{row.days_since_high}일</td>
-                <td><span className={`tag ${row.signal_color === "red" ? "red" : row.signal_color === "yellow" ? "orange" : "green"}`}>{row.signal}</span></td>
+                <td data-label="종목"><strong>{row.symbol}</strong></td>
+                <td data-label="현재가">{fmt.usd(row.current_price)}</td>
+                <td data-label="고점">{fmt.usd(row.high_52w)}<div className="subtle">{row.high_52w_date}</div></td>
+                <td data-label="하락폭" className={row.drawdown_pct <= -20 ? "danger" : row.drawdown_pct <= -10 ? "warning" : "success"}>{fmt.pct(row.drawdown_pct)}</td>
+                <td data-label="고점 이후">{row.days_since_high}일</td>
+                <td data-label="시그널"><span className={`tag ${row.signal_color === "red" ? "red" : row.signal_color === "yellow" ? "orange" : "green"}`}>{row.signal}</span></td>
               </tr>
             ))}</tbody>
           </table>

@@ -70,7 +70,7 @@ export function App() {
             <span className="subtle">API</span>
             <Activity size={16} className="success" />
           </div>
-          <div className="subtle" style={{ marginTop: 8 }}>FastAPI + SQLite</div>
+          <div className="subtle" style={{ marginTop: 8 }}>FastAPI + Neon</div>
         </div>
       </aside>
       <main className="content">
@@ -79,4 +79,3 @@ export function App() {
     </div>
   );
 }
-

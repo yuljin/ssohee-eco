@@ -21,7 +21,7 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
   rows.sort((a, b) => b.value - a.value);
 
   return (
-    <div className="table-wrap">
+    <div className="table-wrap responsive-table">
       <table>
         <thead>
           <tr>
@@ -44,19 +44,19 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
             const avgCost = snapshot.avg_cost_by_symbol[baseSymbol] ?? 0;
             return (
               <tr key={symbol}>
-                <td><strong>{symbol}</strong></td>
-                <td>{quantity ? quantity.toLocaleString("en-US", { maximumFractionDigits: 6 }) : "-"}</td>
-                <td>
+                <td data-label="종목"><strong>{symbol}</strong></td>
+                <td data-label="수량">{quantity ? quantity.toLocaleString("en-US", { maximumFractionDigits: 6 }) : "-"}</td>
+                <td data-label="평가금액">
                   {fmt.usd(value)}
                   <div className="subtle">{snapshot.exchange_rate ? fmt.krw(value * snapshot.exchange_rate) : ""}</div>
                 </td>
-                <td>{avgCost ? fmt.usd(avgCost) : "-"}</td>
-                <td className={pnlClass(pnlPct)}>
+                <td data-label="평단가">{avgCost ? fmt.usd(avgCost) : "-"}</td>
+                <td data-label="손익" className={pnlClass(pnlPct)}>
                   {fmt.pct(pnlPct)}
                   <div>{fmt.usd(pnlAmount)}</div>
                 </td>
-                <td>{(weight * 100).toFixed(2)}%</td>
-                <td>{((targetAllocation[baseSymbol] ?? 0) * 100).toFixed(1)}%</td>
+                <td data-label="현재 비중">{(weight * 100).toFixed(2)}%</td>
+                <td data-label="목표 비중">{((targetAllocation[baseSymbol] ?? 0) * 100).toFixed(1)}%</td>
               </tr>
             );
           })}
@@ -65,4 +65,3 @@ export function PortfolioTable({ snapshot, targetAllocation = {}, assetGroups = 
     </div>
   );
 }
-

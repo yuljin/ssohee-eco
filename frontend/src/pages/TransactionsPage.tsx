@@ -44,7 +44,7 @@ export function TransactionsPage() {
       </div>
       <div className="card">
         <h2>거래 추가</h2>
-        <form className="toolbar" onSubmit={submit}>
+        <form className="toolbar transaction-form" onSubmit={submit}>
           <select className="input" value={form.side} onChange={(e) => setForm({ ...form, side: e.target.value as TransactionCreate["side"] })}>
             <option value="BUY">BUY</option>
             <option value="SELL">SELL</option>
@@ -64,7 +64,7 @@ export function TransactionsPage() {
       <div className="card" style={{ marginTop: 14 }}>
         <h2>목록</h2>
         {isLoading ? <div className="loading">불러오는 중입니다.</div> : (
-          <div className="table-wrap">
+          <div className="table-wrap responsive-table">
             <table>
               <thead>
                 <tr><th>ID</th><th>일시</th><th>구분</th><th>종목</th><th>수량</th><th>가격</th><th>수수료</th><th>환율</th><th>메모</th><th></th></tr>
@@ -72,16 +72,16 @@ export function TransactionsPage() {
               <tbody>
                 {data.map((tx) => (
                   <tr key={tx.id}>
-                    <td>{tx.id}</td>
-                    <td>{new Date(tx.executed_at).toLocaleString("ko-KR")}</td>
-                    <td><span className={`tag ${tx.side === "BUY" ? "buy" : "sell"}`}>{tx.side}</span></td>
-                    <td><strong>{tx.symbol}</strong></td>
-                    <td>{tx.quantity.toLocaleString("en-US", { maximumFractionDigits: 8 })}</td>
-                    <td>{fmt.usd(tx.price)}</td>
-                    <td>{fmt.usd(tx.fee)}</td>
-                    <td>{tx.exchange_rate ? fmt.rate(tx.exchange_rate) : "-"}</td>
-                    <td>{tx.memo ?? ""}</td>
-                    <td><button className="button danger" onClick={() => remove.mutate(tx.id)}>삭제</button></td>
+                    <td data-label="ID">{tx.id}</td>
+                    <td data-label="일시">{new Date(tx.executed_at).toLocaleString("ko-KR")}</td>
+                    <td data-label="구분"><span className={`tag ${tx.side === "BUY" ? "buy" : "sell"}`}>{tx.side}</span></td>
+                    <td data-label="종목"><strong>{tx.symbol}</strong></td>
+                    <td data-label="수량">{tx.quantity.toLocaleString("en-US", { maximumFractionDigits: 8 })}</td>
+                    <td data-label="가격">{fmt.usd(tx.price)}</td>
+                    <td data-label="수수료">{fmt.usd(tx.fee)}</td>
+                    <td data-label="환율">{tx.exchange_rate ? fmt.rate(tx.exchange_rate) : "-"}</td>
+                    <td data-label="메모">{tx.memo ?? ""}</td>
+                    <td data-label="관리"><button className="button danger" onClick={() => remove.mutate(tx.id)}>삭제</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -92,4 +92,3 @@ export function TransactionsPage() {
     </>
   );
 }
-

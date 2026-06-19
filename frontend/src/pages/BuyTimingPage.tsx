@@ -30,7 +30,7 @@ export function BuyTimingPage() {
       {guide.data.warning ? <div className="card warning" style={{ marginTop: 14 }}>{guide.data.warning}</div> : null}
       <div className="card" style={{ marginTop: 14 }}>
         <h2>자산별 가이드</h2>
-        <div className="table-wrap">
+        <div className="table-wrap responsive-table">
           <table>
             <thead>
               <tr><th>종목</th><th>하락폭</th><th>비중</th><th>종합점수</th><th>매수비율</th><th>추천투입</th><th>시그널</th></tr>
@@ -38,16 +38,16 @@ export function BuyTimingPage() {
             <tbody>
               {guide.data.asset_guides.map((row) => (
                 <tr key={row.symbol}>
-                  <td><strong>{row.symbol}</strong></td>
-                  <td className={row.drawdown_pct <= -20 ? "danger" : "neutral"}>{fmt.pct(row.drawdown_pct, 1)}</td>
-                  <td>{row.current_weight.toFixed(1)}% / {row.target_weight.toFixed(1)}%</td>
-                  <td>
+                  <td data-label="종목"><strong>{row.symbol}</strong></td>
+                  <td data-label="하락폭" className={row.drawdown_pct <= -20 ? "danger" : "neutral"}>{fmt.pct(row.drawdown_pct, 1)}</td>
+                  <td data-label="비중">{row.current_weight.toFixed(1)}% / {row.target_weight.toFixed(1)}%</td>
+                  <td data-label="종합점수">
                     <strong>{row.total_score.toFixed(0)}</strong>
                     <div className="progress"><span style={{ width: `${Math.min(row.total_score, 100)}%` }} /></div>
                   </td>
-                  <td>×{row.buy_ratio.toFixed(2)}</td>
-                  <td>{fmt.usd(row.recommended_amount, 0)}</td>
-                  <td><span className={`tag ${row.signal_color}`}>{row.signal}</span></td>
+                  <td data-label="매수비율">×{row.buy_ratio.toFixed(2)}</td>
+                  <td data-label="추천투입">{fmt.usd(row.recommended_amount, 0)}</td>
+                  <td data-label="시그널"><span className={`tag ${row.signal_color}`}>{row.signal}</span></td>
                 </tr>
               ))}
             </tbody>
@@ -57,4 +57,3 @@ export function BuyTimingPage() {
     </>
   );
 }
-
