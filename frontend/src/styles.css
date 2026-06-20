@@ -361,7 +361,7 @@ th {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 980px) {
   body {
     background: #101116;
   }
