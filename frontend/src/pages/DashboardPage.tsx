@@ -8,16 +8,26 @@ import { StatCard } from "../components/StatCard";
 const COLORS = ["#8aadf4", "#a6da95", "#eed49f", "#ed8796", "#c6a0f6", "#8bd5ca"];
 
 export function DashboardPage() {
-  const snapshot = useQuery({ queryKey: ["snapshot"], queryFn: () => api.snapshot() });
-  const metrics = useQuery({ queryKey: ["metrics"], queryFn: api.metrics });
-  const allocation = useQuery({ queryKey: ["allocation"], queryFn: api.allocation });
-  const groups = useQuery({ queryKey: ["assetGroups"], queryFn: api.assetGroups });
+  const fastDashboard = useQuery({
+    queryKey: ["dashboard", "fast"],
+    queryFn: () => api.dashboard(false),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false
+  });
+  const liveDashboard = useQuery({
+    queryKey: ["dashboard", "live"],
+    queryFn: () => api.dashboard(true),
+    enabled: Boolean(fastDashboard.data),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false
+  });
 
-  if (snapshot.isLoading) return <div className="loading">포트폴리오를 불러오는 중입니다.</div>;
-  if (!snapshot.data) return <div className="error">포트폴리오 데이터를 불러오지 못했습니다.</div>;
+  if (fastDashboard.isLoading) return <div className="loading">포트폴리오를 불러오는 중입니다.</div>;
+  if (!fastDashboard.data) return <div className="error">포트폴리오 데이터를 불러오지 못했습니다.</div>;
 
-  const snap = snapshot.data;
-  const metric = metrics.data;
+  const dashboard = liveDashboard.data ?? fastDashboard.data;
+  const snap = dashboard.snapshot;
+  const metric = dashboard.metrics;
   const pieData = Object.entries(snap.value_by_symbol)
     .filter(([, value]) => value > 0)
     .map(([name, value]) => ({ name, value }));
@@ -71,7 +81,7 @@ export function DashboardPage() {
       </div>
       <div className="card" style={{ marginTop: 14 }}>
         <h2>포트폴리오 구성</h2>
-        <PortfolioTable snapshot={snap} targetAllocation={allocation.data?.weights} assetGroups={groups.data} />
+        <PortfolioTable snapshot={snap} targetAllocation={dashboard.allocation.weights} assetGroups={dashboard.asset_groups} />
       </div>
     </>
   );

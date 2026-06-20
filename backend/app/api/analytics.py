@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.api.portfolio import build_snapshot
+from app.api.rebalance import get_allocation
+from app.core.config import ASSET_GROUPS
 from app.core.db import get_db
 from app.schemas.analytics import MonthlyReturn, PortfolioMetrics
 from app.services.analytics_service import calculate_metrics, monthly_returns
@@ -18,6 +20,22 @@ router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
 def portfolio_metrics(gold_krx_price: Optional[float] = Query(None), db: Session = Depends(get_db)):
     snapshot = build_snapshot(db, gold_krx_price)
     return calculate_metrics(db, snapshot)
+
+
+@router.get("/dashboard")
+def dashboard(
+    gold_krx_price: Optional[float] = Query(None),
+    live_market_data: bool = Query(True),
+    db: Session = Depends(get_db),
+):
+    snapshot = build_snapshot(db, gold_krx_price, live_market_data=live_market_data)
+    return {
+        "snapshot": snapshot,
+        "metrics": calculate_metrics(db, snapshot),
+        "allocation": get_allocation(),
+        "asset_groups": ASSET_GROUPS,
+        "live_market_data": live_market_data,
+    }
 
 
 @router.get("/monthly-returns", response_model=list[MonthlyReturn])

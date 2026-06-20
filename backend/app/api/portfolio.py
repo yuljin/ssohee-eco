@@ -21,16 +21,21 @@ from app.services.price_service import get_latest_prices, get_usd_krw_exchange_r
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 
 
-def build_snapshot(db: Session, gold_krx_price: Optional[float] = None) -> PortfolioSnapshot:
+def build_snapshot(
+    db: Session,
+    gold_krx_price: Optional[float] = None,
+    live_market_data: Optional[bool] = None,
+) -> PortfolioSnapshot:
     holdings, avg_costs, avg_exchange_rates = compute_all_from_transactions(db)
-    exchange_rate = get_usd_krw_exchange_rate() if settings.live_market_data else latest_exchange_rate_from_transactions(db)
+    use_live_market_data = settings.live_market_data if live_market_data is None else live_market_data
+    exchange_rate = get_usd_krw_exchange_rate() if use_live_market_data else latest_exchange_rate_from_transactions(db)
     symbols = list(holdings.positions.keys())
     manual_prices = {}
     if gold_krx_price and exchange_rate > 0:
         manual_prices["GOLD-KRX"] = gold_krx_price / exchange_rate
     elif "GOLD-KRX" in holdings.positions:
         manual_prices["GOLD-KRX"] = avg_costs.get("GOLD-KRX", 0.0)
-    if settings.live_market_data:
+    if use_live_market_data:
         try:
             prices = get_latest_prices(symbols, manual_prices=manual_prices)
         except Exception as exc:

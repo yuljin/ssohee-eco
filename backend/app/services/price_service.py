@@ -12,7 +12,7 @@ from app.core.config import MANUAL_PRICE_REQUIRED
 
 TICKER_MAPPING = {"BTC": "BTC-USD", "ETH": "ETH-USD"}
 NASDAQ_SYMBOLS = {"VOO", "QQQ", "TLT", "GLDM"}
-CACHE_SECONDS = 60
+CACHE_SECONDS = 600
 _executor = ThreadPoolExecutor(max_workers=6)
 _price_cache: dict[str, tuple[float, float]] = {}
 _exchange_rate_cache: tuple[float, float] | None = None

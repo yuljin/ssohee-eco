@@ -144,6 +144,14 @@ export interface BuyTimingGuide {
   warning: string;
 }
 
+export interface DashboardData {
+  snapshot: PortfolioSnapshot;
+  metrics: PortfolioMetrics;
+  allocation: TargetAllocation;
+  asset_groups: Record<string, string[]>;
+  live_market_data: boolean;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
@@ -158,6 +166,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  dashboard: (liveMarketData = true, goldKrxPrice?: number) => {
+    const params = new URLSearchParams({ live_market_data: String(liveMarketData) });
+    if (goldKrxPrice) params.set("gold_krx_price", String(goldKrxPrice));
+    return request<DashboardData>(`/api/v1/analytics/dashboard?${params}`);
+  },
   snapshot: (goldKrxPrice?: number) =>
     request<PortfolioSnapshot>(`/portfolio/snapshot${goldKrxPrice ? `?gold_krx_price=${goldKrxPrice}` : ""}`),
   metrics: () => request<PortfolioMetrics>("/api/v1/analytics/portfolio-metrics"),
@@ -189,4 +202,3 @@ export const api = {
     return request<BuyTimingGuide>(`/api/v1/buy-timing/guide?${params}`);
   }
 };
-

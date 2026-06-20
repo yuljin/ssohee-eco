@@ -97,17 +97,19 @@ def latest_trade_prices_from_transactions(
 ) -> Dict[str, float]:
     manual_prices = manual_prices or {}
     prices: Dict[str, float] = {}
-    for symbol in symbols:
-        if symbol in manual_prices:
-            prices[symbol] = manual_prices[symbol]
-            continue
-        tx = (
+    lookup_symbols = [symbol for symbol in symbols if symbol not in manual_prices]
+    latest_by_symbol: dict[str, float] = {}
+    if lookup_symbols:
+        rows = (
             db.query(Transaction)
-            .filter(Transaction.symbol == symbol, Transaction.symbol != "CASH", Transaction.price > 0)
+            .filter(Transaction.symbol.in_(lookup_symbols), Transaction.symbol != "CASH", Transaction.price > 0)
             .order_by(Transaction.executed_at.desc(), Transaction.id.desc())
-            .first()
+            .all()
         )
-        prices[symbol] = float(tx.price) if tx else avg_costs.get(symbol, 1.0)
+        for tx in rows:
+            latest_by_symbol.setdefault(tx.symbol, float(tx.price))
+    for symbol in symbols:
+        prices[symbol] = manual_prices.get(symbol) or latest_by_symbol.get(symbol) or avg_costs.get(symbol, 1.0)
     return prices
 
 
