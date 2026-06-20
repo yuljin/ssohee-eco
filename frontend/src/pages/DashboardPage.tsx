@@ -1,16 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { api } from "../lib/api";
+import { api, type DashboardData } from "../lib/api";
 import { fmt, pnlClass } from "../lib/format";
 import { PortfolioTable } from "../components/PortfolioTable";
 import { StatCard } from "../components/StatCard";
 
 const COLORS = ["#8aadf4", "#a6da95", "#eed49f", "#ed8796", "#c6a0f6", "#8bd5ca"];
+const DASHBOARD_CACHE_KEY = "ssohee-eco.dashboard.v1";
+const DASHBOARD_CACHE_TTL = 10 * 60 * 1000;
+
+function readCachedDashboard(): DashboardData | undefined {
+  try {
+    const raw = window.localStorage.getItem(DASHBOARD_CACHE_KEY);
+    if (!raw) return undefined;
+    const cached = JSON.parse(raw) as { savedAt: number; data: DashboardData };
+    if (!cached.savedAt || Date.now() - cached.savedAt > DASHBOARD_CACHE_TTL) return undefined;
+    return cached.data;
+  } catch {
+    return undefined;
+  }
+}
+
+function writeCachedDashboard(data: DashboardData) {
+  try {
+    window.localStorage.setItem(DASHBOARD_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+  } catch {
+    // Ignore storage failures; network data still renders normally.
+  }
+}
 
 export function DashboardPage() {
+  const cachedDashboard = useMemo(() => readCachedDashboard(), []);
   const fastDashboard = useQuery({
     queryKey: ["dashboard", "fast"],
     queryFn: () => api.dashboard(false),
+    initialData: cachedDashboard,
+    initialDataUpdatedAt: cachedDashboard ? Date.now() : undefined,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false
   });
@@ -21,6 +47,11 @@ export function DashboardPage() {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false
   });
+
+  useEffect(() => {
+    const data = liveDashboard.data ?? fastDashboard.data;
+    if (data) writeCachedDashboard(data);
+  }, [fastDashboard.data, liveDashboard.data]);
 
   if (fastDashboard.isLoading) return <div className="loading">포트폴리오를 불러오는 중입니다.</div>;
   if (!fastDashboard.data) return <div className="error">포트폴리오 데이터를 불러오지 못했습니다.</div>;
