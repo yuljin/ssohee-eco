@@ -37,7 +37,13 @@ export function DashboardPage() {
         <StatCard
           label="총 손익"
           value={metric?.total_return_pct == null ? "-" : fmt.pct(metric.total_return_pct)}
-          helper={metric ? fmt.usd(metric.total_pnl) : undefined}
+          helper={
+            metric
+              ? `${fmt.usd(metric.total_pnl)} · 환차익 포함 ${
+                  metric.total_return_pct_krw == null ? "-" : fmt.pct(metric.total_return_pct_krw)
+                } (${fmt.krw(metric.total_pnl_krw)})`
+              : undefined
+          }
           tone={pnlClass(metric?.total_pnl ?? 0)}
         />
       </div>

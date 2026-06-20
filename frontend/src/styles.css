@@ -148,6 +148,7 @@ select {
 .subtle {
   color: #8f98aa;
   font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .gain {
