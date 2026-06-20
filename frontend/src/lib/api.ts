@@ -111,6 +111,8 @@ export interface ExchangeRateAnalysis {
   history: { date: string; rate: number }[];
 }
 
+export type ExchangeRateGuide = Record<string, ExchangeRateAnalysis>;
+
 export interface AssetBuyGuide {
   symbol: string;
   current_price: number;
@@ -196,6 +198,7 @@ export const api = {
     request<Record<string, number>>(`/api/v1/drawdown/cash-guide?available_cash=${cash}&weeks=${weeks}`),
   exchangeRate: (periodDays = 365) =>
     request<ExchangeRateAnalysis>(`/api/v1/exchange-rate/analysis?period_days=${periodDays}`),
+  exchangeGuide: () => request<ExchangeRateGuide>("/api/v1/exchange-rate/guide"),
   buyTiming: (monthlyAmount = 1000, goldKrxPrice?: number) => {
     const params = new URLSearchParams({ monthly_amount: String(monthlyAmount) });
     if (goldKrxPrice) params.set("gold_krx_price", String(goldKrxPrice));

@@ -301,6 +301,27 @@ th {
   background: #8aadf4;
 }
 
+.reference-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: #cfd5e6;
+  font-size: 12px;
+}
+
+.reference-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reference-list i {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+}
+
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;

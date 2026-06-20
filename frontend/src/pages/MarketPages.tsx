@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { api } from "../lib/api";
 import { fmt } from "../lib/format";
 import { StatCard } from "../components/StatCard";
@@ -50,6 +50,12 @@ export function DrawdownPage() {
 export function ExchangeRatePage() {
   const [period, setPeriod] = useState(365);
   const { data, isLoading } = useQuery({ queryKey: ["exchange", period], queryFn: () => api.exchangeRate(period) });
+  const guide = useQuery({ queryKey: ["exchangeGuide"], queryFn: api.exchangeGuide, staleTime: 10 * 60 * 1000 });
+  const referenceLines = [
+    { label: "3개월 평균", value: guide.data?.["3개월"]?.average, color: "#a6da95" },
+    { label: "6개월 평균", value: guide.data?.["6개월"]?.average, color: "#eed49f" },
+    { label: "1년 평균", value: guide.data?.["1년"]?.average, color: "#ed8796" }
+  ].filter((item): item is { label: string; value: number; color: string } => Boolean(item.value));
   if (isLoading) return <div className="loading">환율을 분석하는 중입니다.</div>;
   if (!data) return <div className="error">환율 데이터를 불러오지 못했습니다.</div>;
   return (
@@ -76,9 +82,28 @@ export function ExchangeRatePage() {
             <XAxis dataKey="date" stroke="#8f98aa" />
             <YAxis stroke="#8f98aa" domain={["auto", "auto"]} />
             <Tooltip formatter={(v) => fmt.rate(Number(v ?? 0))} />
+            {referenceLines.map((line) => (
+              <ReferenceLine
+                key={line.label}
+                y={line.value}
+                stroke={line.color}
+                strokeDasharray="5 5"
+                label={{ value: line.label, fill: line.color, fontSize: 12, position: "insideTopRight" }}
+              />
+            ))}
             <Line type="monotone" dataKey="rate" stroke="#8aadf4" strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
+        {referenceLines.length ? (
+          <div className="reference-list">
+            {referenceLines.map((line) => (
+              <span key={line.label}>
+                <i style={{ background: line.color }} />
+                {line.label} {fmt.rate(line.value)}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
     </>
   );
